@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ficha de proyecto de investigación</title>
+<style>
+:root{--bg:#f4f1ea;--card:#fff;--ink:#222;--muted:#666;--line:#d9d3c7;--accent:#2f6f8f;--ok:#2e8b57;--warn:#b8860b;--bad:#b03a2e;--shadow:0 2px 6px rgba(0,0,0,.08)}
+[data-theme="dark"]{--bg:#1b1d21;--card:#25282e;--ink:#e8e8e8;--muted:#a0a4ab;--line:#3a3e46;--accent:#5fa8d3;--ok:#4fbf7f;--warn:#e0b04a;--bad:#e06a5e;--shadow:0 2px 6px rgba(0,0,0,.5)}
+*{box-sizing:border-box}
+body{margin:0;font-family:system-ui,Segoe UI,Roboto,sans-serif;background:var(--bg);color:var(--ink);line-height:1.5}
+header.top{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 20px;background:var(--card);border-bottom:1px solid var(--line);position:sticky;top:0;z-index:5}
+h1{font-size:1.1rem;margin:0}
+h2{font-size:1.05rem;margin:0}
+main{max-width:920px;margin:0 auto;padding:20px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:18px;margin-bottom:18px;box-shadow:var(--shadow)}
+.floor-head{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+.floor.bloqueado{opacity:.5}
+.msg-bloqueo{display:none;color:var(--bad);font-size:.9rem;margin:6px 0;font-weight:600}
+.floor.bloqueado .msg-bloqueo{display:block}
+label{display:block;font-weight:600;margin:10px 0 4px;font-size:.92rem}
+label.inline{display:inline-flex;align-items:center;gap:6px;font-weight:500}
+input[type=text],input[type=password],textarea,select{width:100%;padding:8px;border:1px solid var(--line);border-radius:6px;background:var(--bg);color:var(--ink);font:inherit}
+textarea{min-height:80px;resize:vertical;overflow:hidden}
+textarea[readonly]{opacity:.9}
+.hint{color:var(--muted);font-size:.85rem;margin:2px 0 6px}
+.nota{font-size:.85rem;color:var(--muted);border-left:3px solid var(--accent);padding:6px 10px;background:var(--bg);border-radius:4px;margin:8px 0}
+.btn{display:inline-block;padding:7px 12px;border:1px solid var(--accent);background:transparent;color:var(--accent);border-radius:6px;cursor:pointer;font:inherit;font-size:.88rem;margin:4px 4px 4px 0}
+.btn.primary{background:var(--accent);color:#fff}
+.btn.small{padding:3px 8px;font-size:.8rem}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.fila{display:flex;gap:8px;align-items:center;margin:4px 0}
+.fila input[type=text]{flex:1}
+.acciones{margin-top:12px;border-top:1px dashed var(--line);padding-top:10px}
+.room{border:1px solid var(--line);border-radius:8px;padding:10px 12px;margin:10px 0}
+.badge{font-size:.78rem;padding:2px 9px;border-radius:999px;border:1px solid var(--line);color:var(--muted)}
+.badge.ok{color:var(--ok);border-color:var(--ok)}
+.badge.pend{color:var(--warn);border-color:var(--warn)}
+.review{display:inline-flex;align-items:center;gap:6px;margin:6px 0}
+.wc{font-size:.82rem;color:var(--muted);margin:4px 0}
+.wc.over{color:var(--bad);font-weight:600}
+.bar{height:16px;background:var(--line);border-radius:999px;overflow:hidden;margin:6px 0}
+#barra{height:100%;width:0;transition:width .4s}
+#barra.bad{background:var(--bad)} #barra.warn{background:var(--warn)} #barra.ok{background:var(--ok)}
+.pct{font-weight:700;font-size:1.1rem}
+.scroll{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:.85rem}
+th,td{border:1px solid var(--line);padding:4px 6px;text-align:center}
+td:first-child,th:first-child{text-align:left;min-width:180px}
+td input[type=text]{min-width:160px}
+.aviso{position:fixed;bottom:16px;left:50%;transform:translateX(-50%);max-width:90%;padding:10px 16px;border-radius:8px;background:var(--card);border:1px solid var(--accent);box-shadow:var(--shadow);display:none;z-index:20}
+.aviso.bad{border-color:var(--bad);color:var(--bad)}
+dialog{background:var(--card);color:var(--ink);border:1px solid var(--line);border-radius:10px;padding:20px;max-width:420px}
+dialog::backdrop{background:rgba(0,0,0,.4)}
+.carga{color:var(--accent);font-size:.9rem;min-height:1.2em}
+@media print{
+  body{background:#fff;color:#000}
+  .card{box-shadow:none;border:none;margin:0;padding:0}
+  .floor.bloqueado{opacity:1}
+  .no-print,header.top,button,.msg-bloqueo,.aviso{display:none!important}
+  .floor:not(.print-on){display:none!important}
+  .floor{break-inside:auto;page-break-inside:auto;margin-bottom:24px}
+  textarea{border:none;overflow:visible;resize:none;background:#fff;color:#000}
+  input[type=text]{border:none;background:#fff;color:#000}
+  label{color:#000}
+}
+</style>
+</head>
+<body>
+
+<header class="top no-print">
+  <h1>Ficha de proyecto de investigación · Edificio</h1>
+  <button class="btn" id="tema">Día / Noche</button>
+</header>
+
+<main>
+
+<!-- PISO 1 · Puerta de entrada y control de congruencia (primero en el orden visual) -->
+<section class="card no-print" id="piso1">
+  <div class="floor-head"><h2>Piso 1 · Puerta de entrada y control de congruencia</h2></div>
+
+  <label for="api-key">API_KEY de OpenAI</label>
+  <div class="fila">
+    <input type="password" id="api-key" autocomplete="off" placeholder="sk-...">
+    <button class="btn" id="toggle-key">Mostrar</button>
+  </div>
+  <label class="inline"><input type="checkbox" id="recordar"> Recordar clave en este navegador</label>
+  <p class="nota">Por defecto la clave vive solo en memoria durante la sesión. Si marca la casilla, se guarda en el almacenamiento local (localStorage) de este navegador; cualquiera con acceso a este equipo podría leerla. Desmárquela para borrarla de ese almacenamiento.</p>
+
+  <label for="modelo">Modelo de OpenAI</label>
+  <input type="text" id="modelo" list="modelos" value="gpt-4o-mini">
+  <datalist id="modelos"><option value="gpt-4o-mini"><option value="gpt-4o"><option value="gpt-4.1-mini"></datalist>
+
+  <label for="pregunta">Pregunta de investigación pedagógica</label>
+  <textarea id="pregunta" placeholder="Escriba la pregunta de investigación pedagógica"></textarea>
+
+  <div class="fila">
+    <button class="btn primary" id="revisar">Revisar pregunta</button>
+    <button class="btn" id="limpiar">Limpiar</button>
+    <span class="carga" id="carga"></span>
+  </div>
+
+  <label for="respuesta">Respuesta de OpenAI</label>
+  <textarea id="respuesta" readonly></textarea>
+
+  <label>Indicador de congruencia</label>
+  <div class="bar"><div id="barra"></div></div>
+  <div class="fila"><span class="pct" id="pct">0 %</span><span id="estado-cong" class="hint"></span></div>
+
+  <label for="sintesis">Síntesis del problema a investigar</label>
+  <textarea id="sintesis" placeholder="Disponible solo con más de 80% de congruencia"></textarea>
+  <p class="msg-bloqueo" id="msg-sint" style="display:block">Requiere más de 80% de congruencia en el Piso 1</p>
+  <div class="fila">
+    <button class="btn primary" id="generar">Generar Ficha</button>
+  </div>
+  <div class="aviso-inline" id="aviso-inline"></div>
+</section>
+
+<!-- PISOS 2 A 8: se construyen desde la definición FLOORS -->
+<div id="pisos"></div>
+
+</main>
+
+<dialog id="modal">
+  <p><strong>¿Está seguro?</strong></p>
+  <p>Se borrará toda la información de la ficha.</p>
+  <div class="fila" style="justify-content:flex-end">
+    <button class="btn" id="modal-cancel">Cancelar</button>
+    <button class="btn primary" id="modal-ok">Confirmar</button>
+  </div>
+</dialog>
+
+<div class="aviso" id="aviso"></div>
+
+<script>
+/* ===== Definición de pisos y habitaciones ===== */
+const KEY = "ficha_proyecto_v1";
+const UMBRAL = 80; // Regla: umbral estricto ">" 80
+
+const FLOORS = [
+  { n: 2, t: "Resumen del proyecto", limit: 500, rooms: [
+    { k: "2.resumen", l: "Resumen", h: "Problema, marco teórico, objetivos, metodología y resultados esperados. Máx. 500 palabras.", rows: 7 } ] },
+  { n: 3, t: "Descripción del proyecto", rooms: [
+    { k: "3.planteamiento", l: "Planteamiento del problema", h: "Naturaleza, magnitud, contexto teórico, estado del conocimiento nacional y mundial, brechas y vacío.", rows: 6 },
+    { k: "3.formulacion", l: "Formulación del problema", rows: 3 },
+    { k: "3.justificacion", l: "Justificación", rows: 4 },
+    { k: "3.antecedentes_int", l: "Antecedentes · internacional", rows: 3 },
+    { k: "3.antecedentes_lat", l: "Antecedentes · latinoamericano", rows: 3 },
+    { k: "3.antecedentes_nal", l: "Antecedentes · nacional", rows: 3 } ] },
+  { n: 4, t: "Referente conceptual", rooms: [
+    { k: "4.mapa", l: "Mapa conceptual / plano gnoseológico", h: "Una relación por línea, con el formato: Concepto A → relación → Concepto B.", rows: 8 } ] },
+  { n: 5, t: "Objetivos", limit: 500, rooms: [
+    { k: "5.general", l: "Objetivo general", rows: 3 },
+    { k: "5.especificos", l: "Objetivos específicos", h: "Alcanzables con la metodología. No son actividades. Máx. 500 palabras entre general y específicos.", rows: 6 } ] },
+  { n: 6, t: "Metodología propuesta", limit: 3000, rooms: [
+    { k: "6.metodologia", l: "Metodología", h: "Enfoque, procedimientos, técnicas, recolección, sistematización, análisis y presentación de resultados. Máx. 3000 palabras.", rows: 14 } ] },
+  { n: 7, t: "Cronograma de actividades", rooms: [
+    { k: "7.cronograma", l: "Actividades por mes durante el periodo de ejecución", type: "cronograma" } ] },
+  { n: 8, t: "Bibliografía", rooms: [
+    { k: "8.refs", l: "Referencias citadas", h: "Solo referencias citadas en el texto. Si las genera OpenAI, verifique cada una.", type: "refs" } ] }
+];
+
+const TEXT_KEYS = ["2.resumen","3.planteamiento","3.formulacion","3.justificacion","3.antecedentes_int","3.antecedentes_lat","3.antecedentes_nal","4.mapa","5.general","5.especificos","6.metodologia"];
+
+const SYS_CONG = "Eres un evaluador experto en investigación pedagógica. Evalúa la congruencia de la pregunta de investigación pedagógica que te envían: claridad, pertinencia al ámbito educativo, viabilidad de investigarla y coherencia interna. Responde estrictamente con un objeto JSON con la forma {\"congruencia\": <entero de 0 a 100>, \"explicacion\": \"<texto breve en español>\"}, sin texto adicional.";
+
+const SYS_FICHA = "Eres un asesor experto en investigación pedagógica. Con base en la pregunta y la síntesis del problema, redacta la ficha en español. Responde estrictamente con un objeto JSON (sin texto adicional ni bloques de código) con estas claves: \"2.resumen\" (máx. 500 palabras: problema, marco teórico, objetivos, metodología y resultados esperados); \"3.planteamiento\"; \"3.formulacion\"; \"3.justificacion\"; \"3.antecedentes_int\"; \"3.antecedentes_lat\"; \"3.antecedentes_nal\"; \"4.mapa\" (una relación por línea, formato Concepto A → relación → Concepto B); \"5.general\"; \"5.especificos\" (objetivos alcanzables con la metodología; máx. 500 palabras entre general y específicos; no son actividades); \"6.metodologia\" (máx. 3000 palabras: enfoque, procedimientos, técnicas, recolección, sistematización, análisis y presentación de resultados); \"7.cronograma\" (array de objetos {\"actividad\": string, \"meses\": array de enteros del 1 al 12}); \"8.refs\" (array de strings con referencias en formato APA, solo fuentes reales y ampliamente conocidas).";
+
+/* ===== Modelo de estado (único objeto persistido) ===== */
+function defaultState() {
+  const textos = {};
+  FLOORS.forEach(f => f.rooms.forEach(r => {
+    if (r.type === "refs") return;
+    textos[r.k] = r.type === "cronograma" ? "[]" : "";
+  }));
+  return {
+    apiKey: "", recordarClave: false, modelo: "gpt-4o-mini",
+    pregunta: "", respuestaOpenAI: "", congruencia: 0, desbloqueado: false,
+    sintesisProblema: "", textos, refs: [],
+    review: { 2: false, 3: false, 4: false, 5: false, 6: false, 7: false, 8: false },
+    tema: "light"
+  };
+}
+
+function load() {
+  try {
+    const raw = localStorage.getItem(KEY);
+    if (raw) {
+      const s = JSON.parse(raw);
+      const d = defaultState();
+      const m = { ...d, ...s };
+      m.textos = { ...d.textos, ...(s.textos || {}) };
+      m.review = { ...d.review, ...(s.review || {}) };
+      if (!m.recordarClave) m.apiKey = "";
+      m.desbloqueado = m.congruencia > UMBRAL; // siempre derivado
+      return m;
+    }
+  } catch (e) { console.warn("Estado no legible, se usa uno nuevo:", e); }
+  return defaultState();
+}
+
+let state = load();
+
+function save() {
+  // La API_KEY solo se persiste si el usuario marcó "Recordar clave en este navegador".
+  const copia = { ...state };
+  if (!state.recordarClave) copia.apiKey = "";
+  try { localStorage.setItem(KEY, JSON.stringify(copia)); }
+  catch (e) { toast("No se pudo guardar en localStorage: " + e.message, "bad"); }
+}
+
+/* ===== Utilidades ===== */
+const $ = s => document.querySelector(s);
+const $$ = s => document.querySelectorAll(s);
+const wc = s => (String(s || "").trim().match(/\S+/g) || []).length;
+const esc = s => String(s).replace(/&/g, "&amp;").replace(/"/g, "&quot;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+function setVal(el, v) { if (el && document.activeElement !== el && el.value !== v) el.value = v; }
+function autosize(el) { el.style.height = "auto"; el.style.height = el.scrollHeight + 4 + "px"; }
+let toastTimer;
+function toast(msg, tipo) {
+  const t = $("#aviso");
+  t.textContent = msg;
+  t.className = "aviso" + (tipo ? " " + tipo : "");
+  t.style.display = "block";
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.style.display = "none", 6000);
+}
+const error = msg => toast(msg, "bad");
+
+/* ===== Construcción de la interfaz de pisos 2 a 8 ===== */
+function buildFloors() {
+  const cont = $("#pisos");
+  FLOORS.forEach(f => {
+    const sec = document.createElement("section");
+    sec.className = "card floor";
+    sec.dataset.floor = f.n;
+    let html = `<div class="floor-head"><h2>Piso ${f.n} · ${f.t}</h2><span class="badge" data-badge="${f.n}"></span></div>`;
+    html += `<p class="msg-bloqueo">Requiere más de 80% de congruencia en el Piso 1</p>`;
+    html += `<label class="review"><input type="checkbox" data-review="${f.n}"> Ajuste humano</label>`;
+    if (f.limit) html += `<p class="wc" data-wc="${f.n}"></p>`;
+    f.rooms.forEach(r => {
+      html += `<div class="room"><label>${r.l}</label>`;
+      if (r.h) html += `<p class="hint">${r.h}</p>`;
+      if (r.type === "cronograma") {
+        html += `<div id="crono"></div><button class="btn small" data-add-act>+ Agregar actividad</button>`;
+      } else if (r.type === "refs") {
+        html += `<div id="refs"></div><div class="fila"><input type="text" id="nueva-ref" placeholder="Referencia en formato APA"><button class="btn" id="add-ref">Agregar</button></div>`;
+      } else {
+        html += `<textarea data-k="${r.k}" rows="${r.rows || 5}"></textarea>`;
+      }
+      html += `</div>`;
+    });
+    html += `<div class="acciones"><button class="btn" data-save>Guardar en localstorage</button><button class="btn" data-pdf="${f.n}">Descargar PDF Piso ${f.n}</button>`;
+    if (f.n === 8) html += `<button class="btn" data-pdf="all">Descargar toda la ficha PDF</button>`;
+    html += `</div>`;
+    sec.innerHTML = html;
+    cont.appendChild(sec);
+  });
+}
+
+/* ===== Cronograma (Piso 7) ===== */
+function parseCrono() {
+  try {
+    const arr = JSON.parse(state.textos["7.cronograma"] || "[]");
+    return Array.isArray(arr) ? arr.map(a => ({
+      actividad: String(a.actividad || ""),
+      meses: Array.from({ length: 12 }, (_, i) => !!(a.meses && a.meses[i]))
+    })) : [];
+  } catch (e) { return []; }
+}
+function setCrono(arr) { state.textos["7.cronograma"] = JSON.stringify(arr); save(); }
+function renderCrono() {
+  const cont = $("#crono");
+  if (!cont) return;
+  const arr = parseCrono();
+  const heads = Array.from({ length: 12 }, (_, i) => `<th>M${i + 1}</th>`).join("");
+  const rows = arr.map((a, i) => `<tr><td><input type="text" data-crono-act="${i}" value="${esc(a.actividad)}"></td>` +
+    a.meses.map((on, m) => `<td><input type="checkbox" data-crono-mes="${i}" data-m="${m}" ${on ? "checked" : ""}></td>`).join("") +
+    `<td><button class="btn small" data-del-act="${i}">✕</button></td></tr>`).join("");
+  cont.innerHTML = `<div class="scroll"><table><thead><tr><th>Actividad</th>${heads}<th></th></tr></thead><tbody>${rows}</tbody></table></div>`;
+}
+
+/* ===== Bibliografía (Piso 8) ===== */
+function renderRefs() {
+  const cont = $("#refs");
+  if (!cont) return;
+  cont.innerHTML = state.refs.length
+    ? state.refs.map((r, i) => `<div class="fila"><input type="text" data-ref="${i}" value="${esc(r)}"><button class="btn small" data-del-ref="${i}">Borrar</button></div>`).join("")
+    : `<p class="hint">Sin referencias.</p>`;
+}
+
+/* ===== Sincronización: toda la interfaz se deriva del estado ===== */
+function sync() {
+  // Piso 1
+  setVal($("#api-key"), state.apiKey);
+  setVal($("#modelo"), state.modelo);
+  $("#recordar").checked = state.recordarClave;
+  setVal($("#pregunta"), state.pregunta);
+  setVal($("#respuesta"), state.respuestaOpenAI);
+  setVal($("#sintesis"), state.sintesisProblema);
+
+  const c = state.congruencia;
+  const barra = $("#barra");
+  barra.style.width = c + "%";
+  barra.className = c > UMBRAL ? "ok" : c >= 50 ? "warn" : "bad";
+  $("#pct").textContent = c + " %";
+  $("#estado-cong").textContent = state.desbloqueado
+    ? "Umbral superado: pisos 2 a 8 habilitados."
+    : "Requiere más de 80% de congruencia en el Piso 1";
+
+  $("#sintesis").disabled = !state.desbloqueado;
+  $("#generar").disabled = !state.desbloqueado;
+  $("#msg-sint").style.display = state.desbloqueado ? "none" : "block";
+
+  // Pisos 2 a 8: bloqueo visible y funcional
+  const bloq = !state.desbloqueado;
+  $$(".floor").forEach(el => {
+    el.classList.toggle("bloqueado", bloq);
+    el.querySelectorAll("input,textarea,button,select").forEach(ctrl => ctrl.disabled = bloq);
+  });
+
+  // Textos, ajuste humano e indicadores por piso
+  $$("[data-k]").forEach(el => { setVal(el, state.textos[el.dataset.k] || ""); autosize(el); });
+  FLOORS.forEach(f => {
+    const cb = $(`[data-review="${f.n}"]`);
+    if (cb) cb.checked = !!state.review[f.n];
+    const badge = $(`[data-badge="${f.n}"]`);
+    if (badge) {
+      const ok = !!state.review[f.n];
+      badge.textContent = ok ? "✔ Revisado por humano" : "Pendiente de revisión humana";
+      badge.className = "badge " + (ok ? "ok" : "pend");
+    }
+    if (f.limit) {
+      const total = f.rooms.reduce((acc, r) => acc + wc(state.textos[r.k]), 0);
+      const el = $(`[data-wc="${f.n}"]`);
+      el.textContent = `${total} / ${f.limit} palabras`;
+      el.classList.toggle("over", total > f.limit);
+    }
+  });
+
+  // Tema
+  document.documentElement.dataset.theme = state.tema;
+  $("#tema").textContent = state.tema === "dark" ? "☀ Día" : "☾ Noche";
+}
+
+function renderAll() { renderCrono(); renderRefs(); sync(); }
+
+/* ===== Llamadas a OpenAI (desde el navegador) ===== */
+async function callOpenAI(messages, maxTokens, json) {
+  const key = state.apiKey.trim();
+  if (!key) throw new Error("Falta la API_KEY de OpenAI en el Piso 1.");
+  const body = { model: state.modelo.trim() || "gpt-4o-mini", messages, temperature: 0.4, max_tokens: maxTokens };
+  if (json) body.response_format = { type: "json_object" };
+  let res;
+  try {
+    res = await fetch("https://api.openai.com/v1/chat/completions", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", "Authorization": "Bearer " + key },
+      body: JSON.stringify(body)
+    });
+  } catch (e) { throw new Error("Error de red al contactar OpenAI: " + e.message); }
+  let data = {};
+  try { data = await res.json(); } catch (e) { /* respuesta no JSON */ }
+  if (!res.ok) throw new Error(`Error de la API de OpenAI (${res.status}): ${data.error?.message || "sin detalle"}`);
+  return data.choices?.[0]?.message?.content || "";
+}
+
+function parseJSON(txt) {
+  const t = String(txt).replace(/```json|```/g, "").trim();
+  const i = t.indexOf("{"), j = t.lastIndexOf("}");
+  if (i < 0 || j < 0) throw new Error("La respuesta de OpenAI no contiene JSON.");
+  try { return JSON.parse(t.slice(i, j + 1)); }
+  catch (e) { throw new Error("No se pudo interpretar el JSON de la respuesta: " + e.message); }
+}
+
+function setBusy(on, msg) {
+  $("#revisar").disabled = on;
+  $("#generar").disabled = on || !state.desbloqueado;
+  $("#carga").textContent = on ? msg : "";
+}
+
+/* ===== Acciones del Piso 1 ===== */
+async function revisar() {
+  const pregunta = $("#pregunta").value.trim();
+  state.pregunta = pregunta;
+  if (!state.apiKey.trim()) { error("Escriba la API_KEY de OpenAI en el Piso 1."); return; }
+  if (!pregunta) { error("Escriba la pregunta de investigación pedagógica."); return; }
+  setBusy(true, "Evaluando congruencia…");
+  try {
+    const txt = await callOpenAI([
+      { role: "system", content: SYS_CONG },
+      { role: "user", content: "Pregunta de investigación pedagógica:\n\"\"\"" + pregunta + "\"\"\"" }
+    ], 600, true);
+    const j = parseJSON(txt);
+    let c = Math.round(Number(j.congruencia));
+    if (!Number.isFinite(c)) throw new Error("El campo 'congruencia' de la respuesta no es numérico.");
+    c = Math.min(100, Math.max(0, c));
+    state.congruencia = c;
+    state.desbloqueado = c > UMBRAL; // regla: > 80
+    state.respuestaOpenAI = String(j.explicacion || "");
+    save();
+  } catch (e) {
+    error(e.message);
+  } finally {
+    setBusy(false);
+    sync();
+  }
+}
+
+function limpiar() {
+  // Se conservan la API_KEY (solo si se marcó recordar) y el modelo; también la preferencia de tema.
+  const conservar = {
+    apiKey: state.recordarClave ? state.apiKey : "",
+    recordarClave: state.recordarClave,
+    modelo: state.modelo,
+    tema: state.tema
+  };
+  state = { ...defaultState(), ...conservar };
+  save();
+  renderAll();
+  toast("Ficha borrada. Clave y modelo conservados según sus preferencias.");
+}
+
+async function generarFicha() {
+  if (!state.desbloqueado) return;
+  const sintesis = $("#sintesis").value.trim();
+  state.sintesisProblema = sintesis;
+  if (!sintesis) { error("Escriba la síntesis del problema a investigar."); return; }
+  const pregunta = state.pregunta || $("#pregunta").value.trim();
+  setBusy(true, "Generando ficha… puede tardar un momento");
+  try {
+    const txt = await callOpenAI([
+      { role: "system", content: SYS_FICHA },
+      { role: "user", content: "Pregunta de investigación:\n" + pregunta + "\n\nSíntesis del problema a investigar:\n" + sintesis }
+    ], 8000, true);
+    const j = parseJSON(txt);
+    TEXT_KEYS.forEach(k => {
+      const v = j[k];
+      state.textos[k] = typeof v === "string" ? v : Array.isArray(v) ? v.join("\n") : "";
+    });
+    const crono = Array.isArray(j["7.cronograma"]) ? j["7.cronograma"] : [];
+    setCrono(crono.map(a => ({
+      actividad: String(a.actividad || ""),
+      meses: Array.from({ length: 12 }, (_, i) => Array.isArray(a.meses) && a.meses.includes(i + 1))
+    })));
+    state.refs = Array.isArray(j["8.refs"]) ? j["8.refs"].map(String) : [];
+    save();
+    toast("Ficha generada. Revísela y marque el ajuste humano por piso.");
+  } catch (e) {
+    error(e.message);
+  } finally {
+    setBusy(false);
+    renderAll();
+  }
+}
+
+/* ===== Impresión / PDF: exclusivamente window.print() ===== */
+function imprimir(n) {
+  const todo = n === "all";
+  $$(".floor").forEach(f => f.classList.toggle("print-on", todo || f.dataset.floor === String(n)));
+  window.print();
+}
+window.addEventListener("afterprint", () => $$(".print-on").forEach(f => f.classList.remove("print-on")));
+
+/* ===== Eventos (delegación) ===== */
+document.addEventListener("input", e => {
+  const t = e.target;
+  if (t.dataset.k) { state.textos[t.dataset.k] = t.value; autosize(t); save(); sync(); return; }
+  if (t.id === "api-key") { state.apiKey = t.value; save(); return; }
+  if (t.id === "modelo") { state.modelo = t.value; save(); return; }
+  if (t.id === "pregunta") { state.pregunta = t.value; save(); return; }
+  if (t.id === "sintesis") { state.sintesisProblema = t.value; save(); return; }
+  if (t.dataset.ref !== undefined) { state.refs[+t.dataset.ref] = t.value; save(); return; }
+  if (t.dataset.cronoAct !== undefined) {
+    const arr = parseCrono(); arr[+t.dataset.cronoAct].actividad = t.value; setCrono(arr); return;
+  }
+});
+
+document.addEventListener("change", e => {
+  const t = e.target;
+  if (t.dataset.review !== undefined) { state.review[t.dataset.review] = t.checked; save(); sync(); return; }
+  if (t.id === "recordar") { state.recordarClave = t.checked; save(); sync(); return; }
+  if (t.dataset.cronoMes !== undefined) {
+    const arr = parseCrono(); arr[+t.dataset.cronoMes].meses[+t.dataset.m] = t.checked; setCrono(arr); return;
+  }
+});
+
+document.addEventListener("click", e => {
+  const t = e.target.closest("button, [data-pdf]");
+  if (!t) return;
+  if (t.id === "toggle-key") {
+    const inp = $("#api-key");
+    inp.type = inp.type === "password" ? "text" : "password";
+    t.textContent = inp.type === "password" ? "Mostrar" : "Ocultar";
+  } else if (t.id === "tema") {
+    state.tema = state.tema === "dark" ? "light" : "dark"; save(); sync();
+  } else if (t.id === "revisar") revisar();
+  else if (t.id === "limpiar") $("#modal").showModal();
+  else if (t.id === "modal-cancel") $("#modal").close();
+  else if (t.id === "modal-ok") { limpiar(); $("#modal").close(); }
+  else if (t.id === "generar") generarFicha();
+  else if (t.id === "add-ref") {
+    const inp = $("#nueva-ref"), v = inp.value.trim();
+    if (v) { state.refs.push(v); inp.value = ""; save(); renderRefs(); sync(); }
+  }
+  else if (t.dataset.delRef !== undefined) { state.refs.splice(+t.dataset.delRef, 1); save(); renderRefs(); sync(); }
+  else if (t.hasAttribute("data-add-act")) {
+    const arr = parseCrono(); arr.push({ actividad: "", meses: Array(12).fill(false) }); setCrono(arr); renderCrono(); sync();
+  }
+  else if (t.dataset.delAct !== undefined) {
+    const arr = parseCrono(); arr.splice(+t.dataset.delAct, 1); setCrono(arr); renderCrono(); sync();
+  }
+  else if (t.hasAttribute("data-save")) {
+    save();
+    toast(state.recordarClave
+      ? "Estado guardado en localStorage de este navegador."
+      : "Estado guardado en localStorage. La API_KEY no se guardó (no está marcada la casilla).");
+  }
+  else if (t.dataset.pdf !== undefined) imprimir(t.dataset.pdf);
+});
+
+/* ===== Arranque: reconstrucción desde localStorage ===== */
+buildFloors();
+renderAll();
+$$("textarea").forEach(autosize);
+
+/*
+  AUDITORÍA — cumplimiento de las 8 reglas de PROMPT_FINAL.docx
+  1. Piso 1 como card superior y primero en el orden visual: <section id="piso1"> antes de #pisos.
+  2. Indicador de congruencia numérico que vive en el estado: state.congruencia, mostrado en #pct y #barra (sync()).
+  3. Umbral estricto > 80: state.desbloqueado = c > UMBRAL (revisar(), load()); mensajes con "más de 80%".
+  4. Bloqueo visible y funcional: sync() aplica .bloqueado y disabled a todos los controles de los pisos 2 a 8.
+  5. Limpiar abre modal de confirmación antes de borrar: #limpiar -> #modal; solo #modal-ok ejecuta limpiar().
+  6. API_KEY manual, tipo password con mostrar/ocultar; no se persiste salvo "Recordar clave" (save() y change#recordar).
+  7. Estado completo persistido en localStorage y reconstruido al cargar: save() y load(), llamados al arrancar.
+  8. Día/Noche alterna y persiste el tema: #tema -> state.tema, data-theme en <html>.
+  Decisiones de implementación: la preferencia de tema se conserva al limpiar; PDF solo mediante window.print() con @media print.
+*/
+</script>
+</body>
+</html>
